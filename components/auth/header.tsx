@@ -9,11 +9,13 @@ const poppinsFont=Poppins({
     weight:['700']
 });
 interface HeaderProps{
-    label:string
+    label:string,
+    topText:string
 }
 
 const Header=({
-    label
+    label,
+    topText
 }:HeaderProps)=>{
 
     return(
@@ -21,7 +23,7 @@ const Header=({
             <div className="flex gap-x-3 items-center">
             <FaUserCircle className="text-2xl" />
                 <span className={cn("text-2xl",poppinsFont.className)}>
-                  Login
+                  {topText}
                 </span>
             </div>
             <p className="mt-3 text-muted-foreground text-sm">

@@ -1,11 +1,9 @@
 "use client";
 
 import CardWrapper from "./card-wrapper";
-import { LoginSchema } from "@/schemas";
+import { RegisterSchema } from "@/schemas";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import { toast } from "sonner";
-import { Checkbox } from "@/components/ui/checkbox";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -19,23 +17,23 @@ import {
 } from "../ui/form";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
-import { loginAction } from "@/actions/login";
 import FormError from "../form-error";
 import { useState, useTransition } from "react";
+import { registerAction } from "@/actions/register";
 
-const LoginForm = () => {
-  const form = useForm<z.infer<typeof LoginSchema>>({
-    resolver: zodResolver(LoginSchema),
+const RegisterForm = () => {
+  const form = useForm<z.infer<typeof RegisterSchema>>({
+    resolver: zodResolver(RegisterSchema),
     defaultValues: {
+      name: "",
       email: "",
       password: "",
     },
   });
   const [isPending, startTransition] = useTransition();
-  const [error,setError]=useState<string|undefined>("");
+  const [error, setError] = useState<string | undefined>("");
 
-
-  function onSubmitFun(values: z.infer<typeof LoginSchema>) {
+  function onSubmitFun(values: z.infer<typeof RegisterSchema>) {
     // console.log("Response Recived");
     // console.log(values);
     // toast("You Have Sent The Following Data", {
@@ -46,22 +44,41 @@ const LoginForm = () => {
     // });
 
     startTransition(async () => {
-      const res=await loginAction(values);
-      setError(res.error)
+      const res = await registerAction(values);
+      setError(res.error);
     });
   }
 
   return (
     <CardWrapper
-    topText="Login"
+      topText="Register"
       headerLabel="Welcome Back"
-      backButtonLabel="Don't Have a Account"
-      backButtonUrl="/auth/register"
+      backButtonLabel="Already Have An Account? Login"
+      backButtonUrl="/auth/login"
       showSocial
     >
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmitFun)} className="space-y-6">
           <div className="space-y-6">
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Name</FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      placeholder="Joe Doe"
+                      type="text"
+                      disabled={isPending}
+                    />
+                  </FormControl>
+                  <FormDescription>Enter Your Name</FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <FormField
               control={form.control}
               name="email"
@@ -102,7 +119,7 @@ const LoginForm = () => {
           </div>
           <FormError message={error} />
           <Button type="submit" className="w-full" disabled={isPending}>
-            Log In
+            Register
           </Button>
         </form>
       </Form>
@@ -110,4 +127,4 @@ const LoginForm = () => {
   );
 };
 
-export default LoginForm;
+export default RegisterForm;
